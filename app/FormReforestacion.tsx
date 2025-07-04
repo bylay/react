@@ -1,7 +1,11 @@
 import { Form, Button } from "react-bootstrap";
 import { useState } from "react";
 
-    export default function FormReforestacion() {
+    interface PropsRefore {
+        onSave: (actividad: Omit<Actividad, 'id'>) => void;
+    }
+
+    export default function FormReforestacion({onSave}: PropsRefore) {
         const [formData, setFormData] = useState({
             titulo: '',
             arboles: 0,
@@ -17,6 +21,13 @@ import { useState } from "react";
 
         const handleSubmit = (e: React.FormEvent) => {
             e.preventDefault();
+            onSave(formData);
+            setFormData({
+                titulo: '',
+                arboles: 0,
+                tipoActividad: 'Urbana',
+                fecha: ''
+            })
             console.log('Datos del Formulario:', formData);
         };
 

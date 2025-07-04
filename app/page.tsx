@@ -1,11 +1,41 @@
 'use client'
-import FormReforestacion from "./FormReforestracion"
+import FormReforestacion from "./FormReforestacion"
+import { useState, useEffect } from "react"
+
+interface Actividad {
+  id: string;
+  titulo: string;
+  arboles: number;
+  tipoActividad: string;
+  fecha: string;
+}
 
 export default function Home() {
+  const [actividades, setActividades] = useState<Actividad[]>([]);
+
+  useEffect(() => {
+    const storedData = localStorage.getItem('actividadesReforestacion');
+    if (storedData) {
+      setActividades(JSON.parse(storedData));
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('actividadesReforestacion', JSON.stringify(actividades)); 
+  }, [actividades]);
+
+  const handleAddActividad = (nuevaActividad: Omit<Actividad, 'id'>) => {
+    const actividadId: Actividad = {
+      ...nuevaActividad,
+      id: Date.now().toString()
+    };
+    setActividades(prev => [...prev, actividadId]);
+  };
+
   return(
     <div className="t1">
       <h1 className="centro">Gestion de Jornadas de Reforestación</h1>
-      <FormReforestacion />
+      <FormReforestacion onSave={handleAddActividad} />
     </div>
   )
 }
