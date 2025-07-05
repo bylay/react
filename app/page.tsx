@@ -1,6 +1,7 @@
 'use client'
 import FormReforestacion from "./FormReforestacion"
 import { useState, useEffect } from "react"
+import ListaActividades from "./ListaActividades"
 
 interface Actividad {
   id: string;
@@ -35,7 +36,14 @@ export default function Home() {
   return(
     <div className="t1">
       <h1 className="centro">Gestion de Jornadas de Reforestación</h1>
-      <FormReforestacion onSave={handleAddActividad} />
+      <div className="fila">
+        <div className="col">
+          <FormReforestacion onSave={handleAddActividad} />
+        </div>
+        <div className="col2">
+          <ListaActividades actividades={actividades}/>
+        </div>
+      </div>
     </div>
   )
 }
