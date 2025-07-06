@@ -1,4 +1,5 @@
     import {Actividad} from './FormReforestacion'
+    import { useState } from 'react';
 
     interface ListaProps {
         actividades: Actividad[];
@@ -20,7 +21,7 @@
                         <div className='tarjeta'>
                             <div className='tbody'>
                                 <h5>{actividad.titulo}</h5>
-                                <h6>{actividad.date} | {actividad.tipoActividad}</h6>
+                                <h6>{actividad.fecha} | {actividad.tipoActividad}</h6>
                                 <p className='Ttexto'>
                                     <strong>{actividad.arboles}</strong> árboles a plantar
                                 </p>

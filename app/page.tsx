@@ -37,7 +37,8 @@ export default function Home() {
   const handleEditActividad = (updateActividad: Actividad) => {
     setActividades(prev => 
       prev.map(a => a.id === updateActividad.id ? updateActividad : a)
-    )
+    );
+    setActividadActual(null);
   }
 
   const handleDeleteActividad = (id: string) => {
