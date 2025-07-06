@@ -2,16 +2,18 @@ import { Form, Button } from "react-bootstrap";
 import { useState } from "react";
 
     interface PropsRefore {
-        onSave: (actividad: Omit<Actividad, 'id'>) => void;
+        ActividadActual: Actividad | null;
+        onSave: (actividad: Actividad | Omit<Actividad, 'id'>) => void
     }
 
-    export default function FormReforestacion({onSave}: PropsRefore) {
-        const [formData, setFormData] = useState({
+    export default function FormReforestacion({ActividadActual, onSave}: PropsRefore) {
+        const [formData, setFormData] = useState(
+            ActividadActual || {
             titulo: '',
             arboles: 0,
             tipoActividad: 'Urbana',
             fecha: ''
-        })
+        });
 
 
         const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {

@@ -12,6 +12,7 @@ interface Actividad {
 }
 
 export default function Home() {
+  const [ActividadActual, setActividadActual] = useState<Actividad | null>(null);
   const [actividades, setActividades] = useState<Actividad[]>([]);
 
   useEffect(() => {
@@ -33,15 +34,30 @@ export default function Home() {
     setActividades(prev => [...prev, actividadId]);
   };
 
+  const handleEditActividad = (updateActividad: Actividad) => {
+    setActividades(prev => 
+      prev.map(a => a.id === updateActividad.id ? updateActividad : a)
+    )
+  }
+
+  const handleDeleteActividad = (id: string) => {
+    setActividades(prev => prev.filter(a => a.id !== id))
+  }
+
   return(
     <div className="t1">
       <h1 className="centro">Gestion de Jornadas de Reforestación</h1>
       <div className="fila">
         <div className="col">
-          <FormReforestacion onSave={handleAddActividad} />
+          <FormReforestacion 
+              ActividadActual={ActividadActual}
+              onSave={ActividadActual ? handleEditActividad : handleAddActividad}/>
         </div>
         <div className="col2">
-          <ListaActividades actividades={actividades}/>
+          <ListaActividades 
+              actividades={actividades}
+              onEdit={setActividadActual}
+              onDelete={handleDeleteActividad}/>
         </div>
       </div>
     </div>
