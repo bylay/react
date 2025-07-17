@@ -2,6 +2,9 @@
 import FormReforestacion from "./FormReforestacion"
 import { useState, useEffect } from "react"
 import ListaActividades from "./ListaActividades"
+import { onAuthStateChanged } from "firebase/auth";
+import { getActividades } from "@/lib/services/firebaseService";
+import { auth } from "@/lib/firebase";
 
 interface Actividad {
   id: string;
@@ -14,6 +17,26 @@ interface Actividad {
 export default function Home() {
   const [ActividadActual, setActividadActual] = useState<Actividad | null>(null);
   const [actividades, setActividades] = useState<Actividad[]>([]);
+  const [ user, setUser ] = useState<any>(null);
+  const [ loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const unsuscribe = onAuthStateChanged(auth, (user) => {
+      setUser(user);
+      loadActividades(user?.uid);
+      setLoading(false);
+    });
+    return () => unsuscribe();
+  }, []);
+
+  const loadActividades = async (userId?: string) => {
+    try {
+      const actividades = await getActividades(userId);
+      setActividades(actividades);
+    } catch (error) {
+      console.error("Error cargando actividades:", error);
+    }
+  }
 
   useEffect(() => {
     const storedData = localStorage.getItem('actividadesReforestacion');

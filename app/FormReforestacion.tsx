@@ -1,5 +1,6 @@
 import { Form, Button } from "react-bootstrap";
 import { useEffect, useState } from "react";
+import { v4 as uuidv4 } from 'uuid';
 
     export interface Actividad {
         id: string;
@@ -7,6 +8,8 @@ import { useEffect, useState } from "react";
         arboles: number;
         tipoActividad: string;
         fecha: string;
+        ubicacion: {lat: number; lng: number};
+        descripcion: string
     }
 
     interface PropsRefore {
@@ -21,7 +24,9 @@ import { useEffect, useState } from "react";
             titulo: '',
             arboles: 0,
             tipoActividad: 'Urbana',
-            fecha: ''
+            fecha: '',
+            ubicacion: { lat: 0, lng: 0},
+            descripcion: '',
         });
 
         useEffect(() => {
@@ -32,7 +37,9 @@ import { useEffect, useState } from "react";
                     titulo: '',
                     arboles: 0,
                     tipoActividad: 'Urbana',
-                    fecha: ''
+                    fecha: '',
+                    ubicacion: { lat: 0, lng: 0},
+                    descripcion: ''
                 })
             }
         }, [ActividadActual])
@@ -47,7 +54,10 @@ import { useEffect, useState } from "react";
             if (!formData.titulo.trim()) nuevosErrores.titulo = 'Nombre requerido';
             if (formData.arboles <= 0) nuevosErrores.arboles = 'Mínimo 1 árbol';
             if (!formData.fecha) nuevosErrores.fecha = 'Fecha requrida';
-            if (formData.fecha < getActualFecha()) nuevosErrores.fecha = 'Fecha no puede ser pasada';
+            if (new Date(formData.fecha) < new Date(getActualFecha())){
+                nuevosErrores.fecha = "Fecha no puede ser pasada"
+            }
+            if (!formData.descripcion.trim()) nuevosErrores.descripcion = "Descripción requerida"
             return nuevosErrores
         }
 
@@ -69,10 +79,31 @@ import { useEffect, useState } from "react";
                 titulo: '',
                 arboles: 0,
                 tipoActividad: 'Urbana',
-                fecha: ''
+                fecha: '',
+                ubicacion: { lat: 0, lng: 0},
+                descripcion: ''
             })
             setErrores({});
         };
+
+        const handleGeolocalizacion = () => {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        setFormData({
+                            ...formData,
+                            ubicacion: {
+                                lat: position.coords.latitude,
+                                lng: position.coords.longitude
+                            }
+                        });
+                    },
+                    (error) => {
+                        console.error("Error obteniendo ubicacion:", error);
+                    }
+                )
+            }
+        }
 
         return (
             <Form onSubmit={handleSubmit}>
@@ -132,6 +163,30 @@ import { useEffect, useState } from "react";
                         {errores.fecha}
                     </Form.Control.Feedback>
                 </Form.Group>
+                
+                <Form.Group>
+                    <Form.Label>Ubicación Exacta</Form.Label>
+                    <Button variant="outline-secondary" onClick={handleGeolocalizacion}>
+                        Obtener Ubicación
+                    </Button>
+                    {formData.ubicacion && (
+                        <span>
+                            {formData.ubicacion.lat.toFixed(4)}, {formData.ubicacion.lng.toFixed(4)}
+                        </span>
+                    )}
+                </Form.Group>
+
+                <Form.Group>
+                    <Form.Label>Descripción Detsllada</Form.Label>
+                    <Form.Control
+                        as="textarea"
+                        rows={3}
+                        name="descripcion"
+                        value={formData.descripcion}
+                        onChange={handleChange}
+                        placeholder="Detalles de la jornada..."
+                    />
+                </Form.Group>
 
                 <Button variant="primary" type="submit">
                     {ActividadActual ? 'Editar' : 'Registrar'}
@@ -142,7 +197,9 @@ import { useEffect, useState } from "react";
                         titulo: '',
                         arboles: 0,
                         tipoActividad: 'Urbana',
-                        fecha: ''
+                        fecha: '',
+                        ubicacion: { lat: 0, lng: 0},
+                        descripcion: ''
                     })}>
                         Cancelar
                     </Button>
